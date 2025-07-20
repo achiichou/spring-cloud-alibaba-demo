@@ -1,0 +1,60 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ProductMainApplication9000<service-product>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.product.ProductMainApplication",
+            "projectName": "service-product",
+            "args": [
+                "--server.port=9000"
+            ],
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ProductMainApplication9001<service-product>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.product.ProductMainApplication",
+            "projectName": "service-product",
+            "args": [
+                "--server.port=9001"
+            ],
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ProductMainApplication9002<service-product>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.product.ProductMainApplication",
+            "projectName": "service-product",
+            "args": [
+                "--server.port=9002"
+            ],
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-OrderMainApplication8000<service-order>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.order.OrderMainApplication",
+            "projectName": "service-order",
+            "args": "--server.port=8000",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-OrderMainApplication8001<service-order>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.order.OrderMainApplication",
+            "projectName": "service-order",
+            "args": "--server.port=8001",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
