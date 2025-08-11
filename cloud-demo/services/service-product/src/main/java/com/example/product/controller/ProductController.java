@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.product.Product;
 import com.example.product.service.ProductService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 public class ProductController {
 
@@ -15,7 +17,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/product/{id}")
-    public Product getProduct(@PathVariable Long id) {
+    public Product getProduct(@PathVariable Long id, HttpServletRequest request) {
+        // feign 攔截器測試
+        String xToken = request.getHeader("X-Token");
+        System.out.println("xToken: " + xToken);
+
         return productService.getProductById(id);
     }
 }

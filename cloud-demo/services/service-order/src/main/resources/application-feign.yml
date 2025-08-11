@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:                ## 加入自訂預設配置
+            connectTimeout: 3000  ## 連接超時，未設定的話預設 10 秒
+            readTimeout: 5000     ## 讀取超時，未設定的話預設 60 秒
+            retryer: feign.Retryer.Default  ## 開啟預設重試機制(未寫的話不會重試)
+            loggerLevel: full
+          service-product:         ## product服務的配置
+            connectTimeout: 3000  
+            readTimeout: 5000     
+            loggerLevel: full
+            retryer: com.example.order.config.OrderConfig.retryer  ## 使用自訂的重試機制
+            requestInterceptors: com.example.order.interceptor.TokenRequestInterceptor  ## 使用自訂的攔截器
+
+feign:
+  sentinel:
+    enabled: true ## 開啟 sentinel 的 feign 攔截器
+
+logging:
+  level:
+    com.example.order.feign: debug
+
+# spring.cloud.openfeign.client.config.default.loggerLevel：設定Feign的日誌級別
+# NONE: 不顯示任何日誌
+# BASIC: 僅顯示基本日誌
+# HEADERS: 顯示基本日誌以及請求和回應頭
+# FULL: 顯示所有日誌
+## -->  設定完後還需要調整logging level，讓spring boot顯示日誌
+
+# loggerLevel、retryer、requestInterceptors 等設定，feign 會先去 bean 中找，所以也可以在 Config 中設定
+# 但這樣的話，如果需要修改設定，就要重啟服務，所以建議在 application-feign.yml 中設定
+# 如果需要動態修改設定，可以把 properties 改為動態配置

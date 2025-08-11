@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.order.Order;
+import com.example.order.feign.ProductFeignClient;
 import com.example.order.service.OrderService;
 import com.example.product.Product;
 
@@ -30,12 +31,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private ProductFeignClient productFeignClient;
+
     @Override
     public Order createOrder(Long userId, Long productId) {
         // 取得商品資料
         // Product product = getProductForRemote(productId);
         // Product product = getProductForRemotewithLoadBalancer(productId);
-        Product product = getProductForRemotewithLoadBalanced(productId);
+        // Product product = getProductForRemotewithAnnotationLoadBalanced(productId);
+        Product product = productFeignClient.getProductById(productId);
         
         // 建立訂單
         return Order.builder()
@@ -49,11 +54,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * annotation @LoadBalanced
+     * annotation @LoadBalanced --> ProductServiceConfig
      * @param productId
      * @return
      */
-    private Product getProductForRemotewithLoadBalanced(Long productId) {
+    private Product getProductForRemotewithAnnotationLoadBalanced(Long productId) {
         String url = "http://service-product/product/" + productId;
         log.info("getProductForRemotewithLoadBalanced url: {}", url);
         return restTemplate.getForObject(url, Product.class);
