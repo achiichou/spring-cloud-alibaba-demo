@@ -20,13 +20,6 @@
 
     <dependencies>
 
-        <!-- sentinel：feign fallback 測試用 -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>
-        <!-- sentinel：feign fallback 測試用 -->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

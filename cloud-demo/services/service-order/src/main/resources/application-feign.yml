@@ -6,14 +6,18 @@ spring:
           default:                ## 加入自訂預設配置
             connectTimeout: 3000  ## 連接超時，未設定的話預設 10 秒
             readTimeout: 5000     ## 讀取超時，未設定的話預設 60 秒
-            retryer: feign.Retryer.Default  ## 開啟預設重試機制(未寫的話不會重試)
+            # retryer: feign.Retryer.Default  ## 開啟預設重試機制(未寫的話不會重試)，可以自訂重試邏輯 -> OrderConfig.java
             loggerLevel: full
           service-product:         ## product服務的配置
             connectTimeout: 3000  
             readTimeout: 5000     
             loggerLevel: full
-            retryer: com.example.order.config.OrderConfig.retryer  ## 使用自訂的重試機制
             requestInterceptors: com.example.order.interceptor.TokenRequestInterceptor  ## 使用自訂的攔截器
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      eager: true  ## sentinel eager 為 true 時，會在啟動時就建立連線。原本預設是等到有請求時才建立連線
+      web-context-unify: false  ## 分開請求鏈路
 
 feign:
   sentinel:

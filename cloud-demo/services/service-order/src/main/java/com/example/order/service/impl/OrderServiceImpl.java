@@ -11,6 +11,8 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.example.order.Order;
 import com.example.order.feign.ProductFeignClient;
 import com.example.order.service.OrderService;
@@ -34,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductFeignClient productFeignClient;
 
+    @SentinelResource(value = "createOrder", fallback = "createOrderFallback")
+    // @SentinelResource(value = "createOrder", blockHandler = "createOrderFallback")
     @Override
     public Order createOrder(Long userId, Long productId) {
         // 取得商品資料
@@ -50,6 +54,36 @@ public class OrderServiceImpl implements OrderService {
                 .id(1L)
                 .totalAmount(product.getPrice().multiply(BigDecimal.valueOf(product.getNum())))
                 .productList(Arrays.asList(product))
+                .build();
+    }
+
+    /**
+     * 處理Sentinel @SentinelResource 丟出的 BlockException
+     * blockHandler：參數為 BlockException
+     */
+    public Order createOrderFallback(Long userId, Long productId, BlockException e) {
+        return Order.builder()
+                .userId(404L)
+                .userName("sentinel block exception: " + e.getMessage())
+                .address("sentinel block exception: " + e.getMessage())
+                .id(404L)
+                .totalAmount(BigDecimal.ZERO)
+                .productList(Arrays.asList())
+                .build();
+    }
+
+    /**
+     * 處理Sentinel @SentinelResource 丟出的 FallbackException
+     * fallback：參數為 Throwable
+     */
+    public Order createOrderFallback(Long userId, Long productId, Throwable e) {
+        return Order.builder()
+                .userId(404L)
+                .userName("sentinel fallback exception: " + e.getMessage())
+                .address("sentinel fallback exception: " + e.getMessage())
+                .id(404L)
+                .totalAmount(BigDecimal.ZERO)
+                .productList(Arrays.asList())
                 .build();
     }
 

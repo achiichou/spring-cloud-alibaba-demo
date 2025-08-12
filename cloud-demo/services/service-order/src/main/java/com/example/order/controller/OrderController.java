@@ -34,4 +34,13 @@ public class OrderController {
     public Order createOrder(@RequestParam Long userId, @RequestParam Long productId) {
         return orderService.createOrder(userId, productId);
     }
+
+    /**
+     * 與 createOrder 一樣，用來測試鏈路模式限流
+     * 在 sentinel dashboard 限流時，只選擇 /create-path2 這個來源的鏈路，不會影響到 /create 的鏈路
+     */
+    @GetMapping("/create-path2")
+    public Order createOrderPath2(@RequestParam Long userId, @RequestParam Long productId) {
+        return orderService.createOrder(userId, productId);
+    }
 }
