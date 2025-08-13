@@ -1,0 +1,50 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: google-route
+          uri: https://www.google.com  ## 目標，轉到google首頁
+          predicates:               ## 根據以下規則 http://localhost/search?q=gogoogle 會匹配到 google-route
+            - name: Path  # 路徑必須符合規則 -> PathRoutePredicateFactory
+              args:
+                patterns: /search
+            - name: Query # 參數必須符合規則 -> QueryRoutePredicateFactory
+              args: 
+                param: q
+                regexp: gogoogle
+            - name: Custom  # 自訂斷言，加入此斷言後，路徑為：http://localhost/search?q=gogoogle&test=test
+              args:
+                param: test
+                value: test
+        
+        - id: product-route
+          uri: lb://service-product  ## lb = load balancer
+          predicates:
+            - Path=/api/product/**  ## predicates path 的簡短寫法
+          filters:
+            - RewritePath=/api/product/(?<segment>.*), /$\{segment}  ## 重寫路徑，將 /api/product/ 重寫為 /
+
+        - id: order-route
+          uri: lb://service-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/order/(?<segment>.*), /$\{segment}  ## 重寫路徑，將 /api/order/ 重寫為 /
+            - OnceToken=X-Request-token, jwt  ## 自訂過濾器，在 header 加入 JWT token：OnceTokenGatewayFilterFactory
+          # order: 1   ## 依照排序順序匹配，假設有另一組 route order(2) predicates 相同，則會優先匹配 order(1)
+
+      ## 預設過濾器，所有 route 都會適用
+      default-filters:
+        - AddRequestHeader=X-Request-ABC, 123  ## 添加請求頭，將 X-Request-ABC 設為 123
+      ## 跨域
+      globalcors:
+        corsConfigurations:
+          '[/**]':    ## 允許所有路徑
+            allowedOrigins:
+              - "*"  ## 允許所有來源  
+            allowedMethods:
+              - "*"  ## 允許所有方法
+            allowedHeaders:
+              - "*"  ## 允許所有頭部
+            maxAge: 3600  ## 最大年齡
+
