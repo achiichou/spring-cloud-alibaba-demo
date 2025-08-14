@@ -1,4 +1,5 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
             "type": "java",
@@ -63,6 +64,67 @@
             "projectName": "service-order",
             "args": "--server.port=8001",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SeataAccountMainApplication<seata-account>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.atguigu.account.SeataAccountMainApplication",
+            "projectName": "seata-account",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SeataBusinessMainApplication<seata-business>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.atguigu.business.SeataBusinessMainApplication",
+            "projectName": "seata-business",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SeataOrderMainApplication<seata-order>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.atguigu.order.SeataOrderMainApplication",
+            "projectName": "seata-order",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-SeataStorageMainApplication<seata-storage>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.atguigu.storage.SeataStorageMainApplication",
+            "projectName": "seata-storage",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "啟動所有Seata服务",
+            "configurations": [
+                "Spring Boot-SeataAccountMainApplication<seata-account>",
+                "Spring Boot-SeataBusinessMainApplication<seata-business>",
+                "Spring Boot-SeataOrderMainApplication<seata-order>",
+                "Spring Boot-SeataStorageMainApplication<seata-storage>"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "啟動完整微服务架构",
+            "configurations": [
+                "Spring Boot-GatewayMainApplication80<gateway>",
+                "Spring Boot-ProductMainApplication9000<service-product>",
+                "Spring Boot-OrderMainApplication8000<service-order>",
+                "Spring Boot-SeataAccountMainApplication<seata-account>",
+                "Spring Boot-SeataBusinessMainApplication<seata-business>",
+                "Spring Boot-SeataOrderMainApplication<seata-order>",
+                "Spring Boot-SeataStorageMainApplication<seata-storage>"
+            ],
+            "stopAll": true
         }
     ]
 }

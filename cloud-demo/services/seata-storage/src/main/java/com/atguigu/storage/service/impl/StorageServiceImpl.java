@@ -18,8 +18,9 @@ public class StorageServiceImpl implements StorageService {
     @Transactional(rollbackFor = Exception.class)
     public void deduct(String commodityCode, int count) {
         storageTblMapper.deduct(commodityCode, count);
+        // 模擬異常
         if (Objects.equals(5, count)) {
-            throw new RuntimeException("記憶體不足！");
+            throw new RuntimeException("庫存不足！");
         }
     }
 }

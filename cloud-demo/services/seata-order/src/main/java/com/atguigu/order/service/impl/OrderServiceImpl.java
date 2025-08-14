@@ -34,7 +34,9 @@ public class OrderServiceImpl implements OrderService {
         orderTblMapper.insert(orderTbl);
 
         // 模擬異常
-        int i = 10/0;
+        if (orderCount == 3) {
+            throw new RuntimeException("訂單建立失敗！，回滾測試");
+        }
 
         return orderTbl;
     }
