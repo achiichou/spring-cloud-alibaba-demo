@@ -100,6 +100,7 @@ cloud-demo/
 
 #### 1. 啟動 Nacos
 # 下載Nacos Server(2.5.1版本)
+- 下載位置：https://nacos.io/docs/v2.5/quickstart/quick-start/?spm=5238cd80.2ef5001f.0.0.3f613b7cdZauQc
 # 啟動Nacos (單機模式)
 ```bash
 cd /bin 資料夾
@@ -110,6 +111,8 @@ startup.cmd -m standalone
 
 #### 2. 啟動 Sentinel Dashboard
 # 下載Sentinel Dashboard jar 檔
+- 下載位置： https://sentinelguard.io/zh-cn/docs/dashboard.html
+# 啟動
 ```bash
 java -Dserver.port=8080 -Dcsp.sentinel.dashboard.server=localhost:8080 -Dproject.name=sentinel-dashboard -jar sentinel-dashboard.jar
 ```
@@ -117,10 +120,12 @@ java -Dserver.port=8080 -Dcsp.sentinel.dashboard.server=localhost:8080 -Dproject
 - 預設帳號密碼:sentinel/sentinel
 
 #### 3. 啟動 Seata Server
+# 下載 Seata-Server
+- 下載位置： https://seata.apache.org/zh-cn/release-history/seata-server/
+# 啟動
 ```bash
-# 下載Seata Server
-# 啟動Seata Server
-sh seata-server.sh
+cd /bin 資料夾
+執行 seata-server.bat
 ```
 
 #### 3. 初始化資料庫
