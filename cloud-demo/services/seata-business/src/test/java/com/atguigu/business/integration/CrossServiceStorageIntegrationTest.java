@@ -1,5 +1,30 @@
 package com.atguigu.business.integration;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+
 import com.atguigu.business.bean.StorageOperation;
 import com.atguigu.business.bean.StorageTbl;
 import com.atguigu.business.config.DistributedLockProperties;
@@ -7,26 +32,10 @@ import com.atguigu.business.lock.DistributedLock;
 import com.atguigu.business.lock.DistributedLockException;
 import com.atguigu.business.lock.LockErrorCode;
 import com.atguigu.business.lock.TestRedisConfiguration;
-import com.atguigu.business.config.TestMyBatisConfiguration;
 import com.atguigu.business.mapper.storage.StorageTblMapper;
 import com.atguigu.business.service.BusinessStorageService;
+
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
-import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 跨服務業務邏輯集成測試
@@ -34,13 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * 驗證分布式鎖防止跨服務數據衝突的效果
  */
 @Slf4j
-@SpringBootTest(
-    classes = com.atguigu.business.SeataBusinessMainApplication.class,
-    properties = {
-        "spring.autoconfigure.exclude=org.apache.seata.spring.boot.autoconfigure.SeataAutoConfiguration,org.apache.seata.spring.boot.autoconfigure.SeataCoreAutoConfiguration,org.apache.seata.spring.boot.autoconfigure.SeataDataSourceAutoConfiguration,com.alibaba.cloud.seata.SeataAutoConfiguration"
-    }
-)
-@Import({TestRedisConfiguration.class, TestMyBatisConfiguration.class})
+@SpringBootTest
+@Import({TestRedisConfiguration.class})
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CrossServiceStorageIntegrationTest {

@@ -1,29 +1,21 @@
 package com.atguigu.business.config;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import static org.junit.jupiter.api.Assertions.*;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.sql.DataSource;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * 數據源配置測試
  * 驗證測試環境的數據源配置是否正確
  */
-@SpringBootTest(
-    classes = com.atguigu.business.SeataBusinessMainApplication.class,
-    properties = {
-        "spring.autoconfigure.exclude=org.apache.seata.spring.boot.autoconfigure.SeataAutoConfiguration,org.apache.seata.spring.boot.autoconfigure.SeataCoreAutoConfiguration,org.apache.seata.spring.boot.autoconfigure.SeataDataSourceAutoConfiguration,com.alibaba.cloud.seata.SeataAutoConfiguration"
-    }
-)
-@Import({TestMyBatisConfiguration.class})
-@ActiveProfiles("test")
+@SpringBootTest
 public class DataSourceConfigurationTest {
 
     @Autowired
