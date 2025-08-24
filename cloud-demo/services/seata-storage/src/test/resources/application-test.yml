@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: seata-storage-test
+  datasource:
+    url: jdbc:mysql://localhost:3306/storage_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+# 分布式鎖測試配置
+distributed:
+  lock:
+    redis:
+      host: localhost
+      port: 6379
+      password: 
+      database: 0
+      timeout: 3000
+      connection-pool-size: 10
+      connection-minimum-idle-size: 5
+    lock:
+      default-wait-time: 1 # 測試時使用較短的等待時間
+      default-lease-time: 5 # 測試時使用較短的租約時間
+      key-prefix: "test:distributed:lock:storage:"
+      enable-monitoring: true
+      cross-service-lock: true
+      service-identifier: "seata-storage-test"
+      max-retry-times: 1
+      retry-interval: 100
+
+# 日誌配置
+logging:
+  level:
+    com.atguigu.storage: DEBUG
+    com.atguigu.storage.lock: DEBUG

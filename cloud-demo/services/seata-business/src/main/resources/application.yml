@@ -1,6 +1,31 @@
 spring:
   application:
     name: seata-business
+  datasource:
+    url: jdbc:mysql://localhost:3306/storage_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  # Redis配置 - 用於分布式鎖
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: # Redis密碼，如果沒有密碼可以留空
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 10
+          min-idle: 5
+          max-wait: 3000ms
   cloud:
     nacos:
       server-addr: 127.0.0.1:8848
@@ -9,4 +34,51 @@ spring:
           enabled: false
 server:
   port: 11000
+
+# 分布式鎖配置
+distributed:
+  lock:
+    redis:
+      host: localhost
+      port: 6379
+      password: # Redis密碼，如果沒有密碼可以留空
+      database: 0
+      timeout: 3000
+      connection-pool-size: 10
+      connection-minimum-idle-size: 5
+    lock:
+      default-wait-time: 5 # 默認等待時間（秒）
+      default-lease-time: 30 # 默認鎖持有時間（秒）
+      key-prefix: "distributed:lock:storage:" # 鎖鍵前綴
+      enable-monitoring: true # 啟用監控
+      cross-service-lock: true # 跨服務鎖標識
+      service-identifier: "seata-business" # 服務標識符
+      max-retry-times: 3 # 最大重試次數
+      retry-interval: 1000 # 重試間隔（毫秒）
+    seata:
+      auto-release: true # 事務結束時自動釋放鎖
+      release-timeout: 5000 # 鎖釋放超時時間（毫秒）
+    enable-conflict-detection: true # 啟用跨服務鎖衝突檢測
+    max-retry-attempts: 3 # 最大重試次數
+    retry-base-delay: 100 # 重試基礎延遲時間（毫秒）
+
+# Spring Boot Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+  metrics:
+    tags:
+      application: seata-business
+      service: distributed-lock
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 

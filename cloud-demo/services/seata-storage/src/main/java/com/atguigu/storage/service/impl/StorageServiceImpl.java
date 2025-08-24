@@ -1,5 +1,7 @@
 package com.atguigu.storage.service.impl;
 
+import com.atguigu.storage.lock.DistributedLockable;
+import com.atguigu.storage.lock.LockFailStrategy;
 import com.atguigu.storage.mapper.StorageTblMapper;
 import com.atguigu.storage.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,13 @@ public class StorageServiceImpl implements StorageService {
     StorageTblMapper storageTblMapper;
 
     @Override
+    @DistributedLockable(
+        key = "'storage:' + #commodityCode", 
+        waitTime = 5, 
+        leaseTime = 30,
+        failStrategy = LockFailStrategy.EXCEPTION,
+        businessContext = "storage-deduct"
+    )
     @Transactional(rollbackFor = Exception.class)
     public void deduct(String commodityCode, int count) {
         storageTblMapper.deduct(commodityCode, count);

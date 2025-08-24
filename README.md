@@ -128,6 +128,14 @@ cd /bin 資料夾
 執行 seata-server.bat
 ```
 
+#### 4. 啟動 mysql & redis in docker
+```bash
+docker run -d --name mysql-local -e MYSQL_ROOT_PASSWORD=123456 -p 3306:3306 -v mysql_data:/var/lib/mysql mysql:8.0
+
+docker run -d --name redis -p 6379:6379 redis:7.2
+
+```
+
 #### 3. 初始化資料庫
 執行 `services/static/seata-sql-init.sql` 腳本，創建以下資料庫：
 - `storage_db`: 庫存資料庫
