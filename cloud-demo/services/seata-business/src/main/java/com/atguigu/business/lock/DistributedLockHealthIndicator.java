@@ -1,13 +1,13 @@
 package com.atguigu.business.lock;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuator.health.Health;
-import org.springframework.boot.actuator.health.HealthIndicator;
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
 
 /**
  * 分布式鎖健康檢查指標
@@ -26,9 +26,6 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
 
     @Autowired
     private LockMonitorService lockMonitorService;
-
-    @Autowired(required = false)
-    private CrossServiceLockMetricsCollector metricsCollector;
 
     @Override
     public Health health() {
@@ -52,7 +49,7 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
             try {
                 List<LockInfo> currentLocks = lockMonitorService.getAllLocks();
                 details.put("locks.current.count", currentLocks.size());
-                
+
                 // 統計各服務的鎖數量
                 Map<String, Integer> locksByService = new HashMap<>();
                 for (LockInfo lock : currentLocks) {
@@ -62,18 +59,18 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
                 details.put("locks.current.byService", locksByService);
 
                 // 檢查是否有長期持有的鎖（超過5分鐘）
-                long currentTime = System.currentTimeMillis();
-                long longRunningThreshold = 5 * 60 * 1000; // 5分鐘
+                java.time.LocalDateTime currentTime = java.time.LocalDateTime.now();
+                java.time.Duration longRunningThreshold = java.time.Duration.ofMinutes(5);
                 int longRunningLocks = 0;
-                
+
                 for (LockInfo lock : currentLocks) {
-                    long lockDuration = currentTime - lock.getAcquireTime();
-                    if (lockDuration > longRunningThreshold) {
+                    java.time.Duration lockDuration = java.time.Duration.between(lock.getAcquireTime(), currentTime);
+                    if (lockDuration.compareTo(longRunningThreshold) > 0) {
                         longRunningLocks++;
                     }
                 }
                 details.put("locks.longRunning.count", longRunningLocks);
-                
+
                 if (longRunningLocks > 0) {
                     builder.withDetail("warning", "Found " + longRunningLocks + " long-running locks");
                 }
@@ -88,12 +85,12 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
                 details.put("statistics.totalRequests", stats.getTotalLockRequests());
                 details.put("statistics.successfulLocks", stats.getSuccessfulLocks());
                 details.put("statistics.failedLocks", stats.getFailedLocks());
-                
+
                 // 計算成功率
                 if (stats.getTotalLockRequests() > 0) {
                     double successRate = (double) stats.getSuccessfulLocks() / stats.getTotalLockRequests() * 100;
                     details.put("statistics.successRate", Math.round(successRate * 100.0) / 100.0);
-                    
+
                     // 如果成功率低於90%，標記為警告
                     if (successRate < 90.0) {
                         builder.withDetail("warning", "Lock success rate is low: " + successRate + "%");
@@ -121,7 +118,8 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
         } catch (Exception e) {
             return Health.down()
                     .withDetail("error", e.getMessage())
-                    .withDetail("service", redisDistributedLock != null ? redisDistributedLock.getServiceName() : "unknown")
+                    .withDetail("service",
+                            redisDistributedLock != null ? redisDistributedLock.getServiceName() : "unknown")
                     .build();
         }
     }
@@ -133,7 +131,7 @@ public class DistributedLockHealthIndicator implements HealthIndicator {
         if (holder == null) {
             return "unknown";
         }
-        
+
         // 假設holder格式為: serviceName-instanceId-threadId
         String[] parts = holder.split("-");
         if (parts.length >= 2) {

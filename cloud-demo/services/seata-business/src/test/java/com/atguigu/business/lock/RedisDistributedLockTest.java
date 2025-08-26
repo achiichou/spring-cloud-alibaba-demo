@@ -9,8 +9,9 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * 測試跨服務分布式鎖的獲取、釋放和超時機制
  * 測試服務標識和上下文信息的正確性
  */
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 @DisplayName("RedisDistributedLock 核心功能測試")
 class RedisDistributedLockTest {
@@ -471,6 +473,10 @@ class RedisDistributedLockTest {
             long startTime = System.currentTimeMillis();
             boolean result = distributedLock.tryLock(TEST_LOCK_KEY, shortWaitTime, DEFAULT_LEASE_TIME);
             long endTime = System.currentTimeMillis();
+
+            log.info("startTime:{}", startTime);
+            log.info("endTime:{}", endTime);
+            log.info("spend time:{}", endTime -startTime);
 
             // Then
             assertFalse(result, "超時後應該獲取鎖失敗");

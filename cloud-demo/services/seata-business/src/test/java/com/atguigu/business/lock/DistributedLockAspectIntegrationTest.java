@@ -131,7 +131,6 @@ class DistributedLockAspectIntegrationTest {
     void testLockAcquisitionFailureWithReturnNull() {
         // 測試獲取鎖失敗並返回null的場景
         String[] commodityCodes = {"PRODUCT001", "PRODUCT002"};
-        String expectedLockKey = "distributed:lock:batch:test";
         
         // 模擬鎖獲取失敗
         when(lockKeyGenerator.isValidStorageLockKey(anyString())).thenReturn(false);

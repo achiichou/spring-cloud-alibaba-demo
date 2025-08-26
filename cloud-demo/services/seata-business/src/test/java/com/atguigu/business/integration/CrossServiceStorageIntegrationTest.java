@@ -419,7 +419,7 @@ public class CrossServiceStorageIntegrationTest {
     private void ensureTestDatabaseExists() {
         try {
             // 檢查表是否存在，如果不存在則創建
-            StorageTbl testRecord = storageTblMapper.selectByCommodityCode("TEST_CHECK");
+            storageTblMapper.selectByCommodityCode("TEST_CHECK");
             log.debug("測試數據庫表已存在");
         } catch (Exception e) {
             log.info("測試數據庫表不存在或需要初始化，錯誤: {}", e.getMessage());

@@ -169,7 +169,6 @@ class RedisDistributedLockIntegrationTest {
 
             // When
             for (int i = 0; i < threadCount; i++) {
-                final int threadIndex = i;
                 executor.submit(() -> {
                     try {
                         startLatch.await(); // 等待所有線程準備就緒
