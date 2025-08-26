@@ -2,7 +2,6 @@ package com.atguigu.business.performance;
 
 import com.atguigu.business.bean.StorageTbl;
 import com.atguigu.business.config.DistributedLockProperties;
-
 import com.atguigu.business.lock.DistributedLock;
 import com.atguigu.business.lock.DistributedLockException;
 import com.atguigu.business.lock.LockErrorCode;
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import redis.embedded.RedisServer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -601,7 +599,7 @@ public class CrossServiceConcurrentTest {
 
         @org.springframework.context.annotation.Bean
         @org.springframework.context.annotation.Primary
-        public RedissonClient performanceTestRedissonClient() {
+        RedissonClient performanceTestRedissonClient() {
             org.redisson.config.Config config = new org.redisson.config.Config();
             config.useSingleServer()
                   .setAddress("redis://localhost:" + REDIS_PORT)
@@ -616,7 +614,7 @@ public class CrossServiceConcurrentTest {
 
         @org.springframework.context.annotation.Bean
         @org.springframework.context.annotation.Primary
-        public DistributedLockProperties performanceTestDistributedLockProperties() {
+        DistributedLockProperties performanceTestDistributedLockProperties() {
             DistributedLockProperties properties = new DistributedLockProperties();
             
             // 設置Redis配置

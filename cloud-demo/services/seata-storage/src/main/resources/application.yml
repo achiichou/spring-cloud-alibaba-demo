@@ -32,29 +32,44 @@ server:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 
-# 分布式鎖配置
+# ==========================================
+# 分布式鎖配置 - 跨服務分布式鎖系統設定
+# ==========================================
 distributed:
   lock:
+    # Redis連接配置 - 用於分布式鎖存儲
+    # 重要：必須與seata-business服務連接到相同的Redis實例
     redis:
-      host: localhost
-      port: 6379
-      password: # Redis密碼，如果沒有密碼可以留空
-      database: 0
-      timeout: 3000
-      connection-pool-size: 10
-      connection-minimum-idle-size: 5
+      host: localhost                    # Redis服務器地址，與seata-business服務保持一致
+      port: 6379                        # Redis服務器端口，與seata-business服務保持一致  
+      password:                         # Redis密碼，與seata-business服務保持一致
+      database: 0                       # Redis數據庫編號，與seata-business服務保持一致
+      timeout: 3000                     # 連接超時時間（毫秒）
+      connection-pool-size: 10          # 連接池大小
+      connection-minimum-idle-size: 5   # 連接池最小空閒連接數
+      
+    # 鎖行為配置 - 控制鎖的獲取和持有行為
+    # 重要：鎖相關配置必須與seata-business服務完全一致
     lock:
-      default-wait-time: 5 # 默認等待時間（秒）
-      default-lease-time: 30 # 默認鎖持有時間（秒）
-      key-prefix: "distributed:lock:storage:" # 鎖鍵前綴
-      enable-monitoring: true # 啟用監控
-      cross-service-lock: true # 跨服務鎖標識
-      service-identifier: "seata-storage" # 服務標識符
-      max-retry-times: 3 # 最大重試次數
-      retry-interval: 1000 # 重試間隔（毫秒）
+      default-wait-time: 5              # 默認等待鎖時間（秒），與seata-business服務一致
+      default-lease-time: 30            # 默認鎖持有時間（秒），與seata-business服務一致
+      key-prefix: "distributed:lock:storage:"  # 鎖鍵前綴，必須與seata-business服務完全一致
+      enable-monitoring: true           # 啟用鎖監控和統計功能
+      cross-service-lock: true          # 跨服務鎖標識，啟用跨服務協調
+      service-identifier: "seata-storage"      # 服務標識符，用於鎖持有者識別（與seata-business不同）
+      
+    # 錯誤處理和重試配置 - 提高系統韌性
+    # 重要：這些配置影響跨服務鎖的可靠性，建議與seata-business保持一致
+    max-retry-attempts: 3               # 鎖獲取失敗時的最大重試次數
+    retry-base-delay: 100               # 重試基礎延遲時間（毫秒），實際延遲使用指數退避
+    enable-degradation: true            # 啟用降級模式，Redis不可用時使用本地鎖
+    circuit-breaker-threshold: 5        # 熔斷器閾值，連續失敗次數達到此值時開啟熔斷器
+    
+    # 本地事務集成配置 - 與本地事務生命週期同步
+    # 注意：seata-storage使用本地事務，與seata-business的全局事務不同
     local:
-      auto-release: true # 本地事務結束時自動釋放鎖
-      release-timeout: 5000 # 鎖釋放超時時間（毫秒）
+      auto-release: true                # 本地事務結束時自動釋放鎖
+      release-timeout: 5000             # 鎖釋放超時時間（毫秒）
 
 # Spring Boot Actuator配置
 management:
